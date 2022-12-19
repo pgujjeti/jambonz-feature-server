@@ -8,13 +8,13 @@
   <send retrans="500">
     <![CDATA[
 
-      INVITE sip:16174000001@[remote_ip]:[remote_port] SIP/2.0
+      INVITE sip:[to]@[remote_ip]:[remote_port] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-      From: sipp <sip:sipp@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
-      To: <sip:16174000001@[remote_ip]:[remote_port]>
+      From: [from] <sip:[from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: <sip:[to]@[remote_ip]:[remote_port]>
       Call-ID: [call_id]
       CSeq: 1 INVITE
-      Contact: sip:sipp@[local_ip]:[local_port]
+      Contact: sip:[from]@[local_ip]:[local_port]
       Max-Forwards: 70
       X-Account-Sid: bb845d4b-83a9-4cde-a6e9-50f3743bab3f
       Subject: uac-say
@@ -53,13 +53,13 @@
   <send>
     <![CDATA[
 
-      ACK sip:16174000001@[remote_ip]:[remote_port] SIP/2.0
+      ACK sip:[to]@[remote_ip]:[remote_port] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-      From: sipp <sip:sipp@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
-      To: 16174000001 <sip:16174000001@[remote_ip]:[remote_port]>[peer_tag_param]
+      From: [from] <sip:[from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: [to] <sip:[to]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
       CSeq: 1 ACK
-      Contact: sip:sipp@[local_ip]:[local_port]
+      Contact: sip:[from]@[local_ip]:[local_port]
       Max-Forwards: 70
       Subject: uac-say
       Content-Length: 0
@@ -67,23 +67,26 @@
     ]]>
   </send>
 
-  <recv request="BYE">
-  </recv>
+  <pause milliseconds="3000"/>
 
-  <send>
+  <!-- The 'crlf' option inserts a blank line in the statistics report. -->
+  <send retrans="500">
     <![CDATA[
 
-      SIP/2.0 200 OK
-      [last_Via:]
-      [last_From:]
-      [last_To:]
-      [last_Call-ID:]
-      [last_CSeq:]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      BYE sip:sip:[to]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: [from] <sip:[from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: [to] <sip:[to]@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 2 BYE
+      Max-Forwards: 70
       Content-Length: 0
 
     ]]>
   </send>
+
+  <recv response="200" crlf="true">
+  </recv>
 
 </scenario>
 

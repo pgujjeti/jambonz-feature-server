@@ -20,6 +20,7 @@
     "Redirect": "redirect",
     "RestDial": "rest:dial",
     "SipDecline": "sip:decline",
+    "SipRequest": "sip:request",
     "SipRefer": "sip:refer",
     "SipNotify": "sip:notify",
     "SipRedirect": "sip:redirect",
@@ -28,6 +29,7 @@
     "Tag": "tag",
     "Transcribe": "transcribe"
   },
+  "AllowedSipRecVerbs": ["config", "gather", "transcribe", "listen"],
   "CallStatus": {
     "Trying": "trying",
     "Ringing": "ringing",
@@ -55,12 +57,33 @@
     "StableCall": "stable-call",
     "UnansweredCall": "unanswered-call"
   },
+  "AvmdEvents": {
+    "Beep": "avmd::beep"
+  },
   "GoogleTranscriptionEvents": {
     "Transcription": "google_transcribe::transcription",
     "EndOfUtterance": "google_transcribe::end_of_utterance",
     "NoAudioDetected": "google_transcribe::no_audio_detected",
     "MaxDurationExceeded": "google_transcribe::max_duration_exceeded",
     "VadDetected": "google_transcribe::vad_detected"
+  },
+  "NuanceTranscriptionEvents": {
+    "Transcription": "nuance_transcribe::transcription",
+    "StartOfSpeech": "nuance_transcribe::start_of_speech",
+    "TranscriptionComplete": "nuance_transcribe::end_of_transcription",
+    "Error": "nuance_transcribe::error",
+    "VadDetected": "nuance_transcribe::vad_detected"
+  },
+  "DeepgramTranscriptionEvents": {
+    "Transcription": "deepgram_transcribe::transcription",
+    "ConnectFailure": "deepgram_transcribe::connect_failed",
+    "Connect": "deepgram_transcribe::connect"
+  },
+  "IbmTranscriptionEvents": {
+    "Transcription": "ibm_transcribe::transcription",
+    "ConnectFailure": "ibm_transcribe::connect_failed",
+    "Connect": "ibm_transcribe::connect",
+    "Error": "ibm_transcribe::error"
   },
   "AwsTranscriptionEvents": {
     "Transcription": "aws_transcribe::transcription",
@@ -119,6 +142,22 @@
     "verb:hook",
     "jambonz:error"
   ],
+  "RecordState": {
+    "RecordingOn": "recording_on",
+    "RecordingOff": "recording_off",
+    "RecordingPaused": "recording_paused"
+  },
+  "AmdEvents": {
+    "NoSpeechDetected": "amd_no_speech_detected",
+    "HumanDetected": "amd_human_detected",
+    "MachineDetected": "amd_machine_detected",
+    "MachineStoppedSpeaking": "amd_machine_stopped_speaking",
+    "Error": "amd_error",
+    "DecisionTimeout": "amd_decision_timeout",
+    "ToneDetected": "amd_tone_detected",
+    "ToneTimeout": "amd_tone_timeout",
+    "Stopped": "amd_stopped"
+  },
   "MAX_SIMRINGS": 10,
   "BONG_TONE": "tone_stream://v=-7;%(100,0,941.0,1477.0);v=-7;>=2;+=.1;%(1400,0,350,440)",
   "FS_UUID_SET_NAME": "fsUUIDs"

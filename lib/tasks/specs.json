@@ -1,6 +1,7 @@
 {
   "sip:decline": {
     "properties": {
+      "id": "string",
       "status": "number",
       "reason": "string",
       "headers": "object"
@@ -9,8 +10,21 @@
       "status"
     ]
   },
+  "sip:request": {
+    "properties": {
+      "id": "string",
+      "method": "string",
+      "body": "string",
+      "headers": "object",
+      "actionHook": "object|string"
+    },
+    "required": [
+      "method"
+    ]
+  },
   "sip:refer": {
     "properties": {
+      "id": "string",
       "referTo": "string",
       "referredBy": "string",
       "headers": "object",
@@ -23,9 +37,13 @@
   },
   "config": {
     "properties": {
+      "id": "string",
       "synthesizer": "#synthesizer",
       "recognizer": "#recognizer",
-      "bargeIn": "#bargeIn"
+      "bargeIn": "#bargeIn",
+      "record": "#recordOptions",
+      "amd": "#amd",
+      "notifyEvents": "boolean"
     },
     "required": []
   },
@@ -49,6 +67,7 @@
   },
   "dequeue": {
     "properties": {
+      "id": "string",
       "name": "string",
       "actionHook": "object|string",
       "timeout": "number",
@@ -60,6 +79,7 @@
   },
   "enqueue": {
     "properties": {
+      "id": "string",
       "name": "string",
       "actionHook": "object|string",
       "waitHook": "object|string",
@@ -71,11 +91,12 @@
   },
   "leave": {
     "properties": {
-      
+      "id": "string"
     }
   },
   "hangup": {
     "properties": {
+      "id": "string",
       "headers": "object"
     },
     "required": [
@@ -83,9 +104,13 @@
   },
   "play": {
     "properties": {
-      "url": "string",
+      "id": "string",
+      "url": "string|array",
       "loop": "number|string",
-      "earlyMedia": "boolean"
+      "earlyMedia": "boolean",
+      "seekOffset": "number|string",
+      "timeoutSecs": "number|string",
+      "actionHook": "object|string"
     },
     "required": [
       "url"
@@ -93,6 +118,7 @@
   },
   "say": {
     "properties": {
+      "id": "string",
       "text": "string|array",
       "loop": "number|string",
       "synthesizer": "#synthesizer",
@@ -104,6 +130,7 @@
   },
   "gather": {
     "properties": {
+      "id": "string",
       "actionHook": "object|string",
       "finishOnKey": "string",
       "input": "array",
@@ -127,6 +154,7 @@
   },
   "conference": {
     "properties": {
+      "id": "string",
       "name": "string",
       "beep": "boolean",
       "startConferenceOnEnter": "boolean",
@@ -146,6 +174,7 @@
   },
   "dial": {
     "properties": {
+      "id": "string",
       "actionHook": "object|string",
       "answerOnBridge": "boolean",
       "callerId": "string",
@@ -160,7 +189,8 @@
       "timeLimit": "number",
       "timeout": "number",
       "proxy": "string",
-      "transcribe": "#transcribe"
+      "transcribe": "#transcribe",
+      "amd": "#amd"
     },
     "required": [
       "target"
@@ -168,6 +198,7 @@
   },
   "dialogflow": {
     "properties": {
+      "id": "string",
       "credentials": "object|string",
       "project": "string",
       "environment": "string",
@@ -196,6 +227,7 @@
   },
   "dtmf": {
     "properties": {
+      "id": "string",
       "dtmf": "string",
       "duration": "number"
     },
@@ -205,6 +237,7 @@
   },
   "lex": {
     "properties": {
+      "id": "string",
       "botId": "string",
       "botAlias": "string",
       "credentials": "object",
@@ -229,6 +262,7 @@
   },
   "listen": {
     "properties": {
+      "id": "string",
       "actionHook": "object|string",
       "auth": "#auth",
       "finishOnKey": "string",
@@ -253,6 +287,7 @@
   },
   "message": {
     "properties": {
+      "id": "string",
       "carrier": "string",
       "account_sid": "string",
       "message_sid": "string",
@@ -269,6 +304,7 @@
   },
   "pause": {
     "properties": {
+      "id": "string",
       "length": "number"
     },
     "required": [
@@ -277,6 +313,7 @@
   },
   "rasa": {
     "properties": {
+      "id": "string",
       "url": "string",
       "recognizer": "#recognizer",
       "tts": "#synthesizer",
@@ -296,8 +333,22 @@
       "path"
     ]
   },
+  "recordOptions": {
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["startCallRecording", "stopCallRecording", "pauseCallRecording", "resumeCallRecording"]
+      },
+      "recordingID": "string",
+      "siprecServerURL": "string"
+    },
+    "required": [
+      "action"
+    ]
+  },
   "redirect": {
     "properties": {
+      "id": "string",
       "actionHook": "object|string"
     },
     "required": [
@@ -306,11 +357,13 @@
   },
   "rest:dial": {
     "properties": {
+      "id": "string",
       "account_sid": "string",
       "application_sid": "string",
       "call_hook": "object|string",
       "call_status_hook": "object|string",
       "from": "string",
+      "fromHost": "string",
       "speech_synthesis_vendor": "string",
       "speech_synthesis_voice": "string",
       "speech_synthesis_language": "string",
@@ -329,6 +382,7 @@
   },
   "tag": {
     "properties": {
+      "id": "string",
       "data": "object"
     },
     "required": [
@@ -337,6 +391,7 @@
   },
   "transcribe": {
     "properties": {
+      "id": "string",
       "transcriptionHook": "string",
       "recognizer": "#recognizer",
       "earlyMedia": "boolean"
@@ -357,6 +412,7 @@
         "enum": ["GET", "POST"]
       },
       "headers": "object",
+      "from": "#dialFrom",
       "name": "string",
       "number": "string",
       "sipUri": "string",
@@ -368,6 +424,14 @@
     },
     "required": [
       "type"
+    ]
+  },
+  "dialFrom": {
+    "properties": {
+      "user": "string",
+      "host": "string"
+    },
+    "required": [
     ]
   },
   "auth": {
@@ -384,7 +448,7 @@
     "properties": {
       "vendor": {
         "type": "string",
-        "enum": ["google", "aws", "polly", "microsoft", "default"]
+        "enum": ["google", "aws", "polly", "microsoft", "nuance", "ibm", "default"]
       },
       "language": "string",
       "voice": "string",
@@ -405,7 +469,7 @@
     "properties": {
       "vendor": {
         "type": "string",
-        "enum": ["google", "aws", "microsoft", "default"]
+        "enum": ["google", "aws", "microsoft", "nuance", "deepgram", "ibm", "default"]
       },
       "language": "string",
       "vad": "#vad",
@@ -466,10 +530,191 @@
       },
       "requestSnr": "boolean",
       "initialSpeechTimeoutMs": "number",
-      "azureServiceEndpoint": "string"
+      "azureServiceEndpoint": "string",
+      "azureSttEndpointId": "string",
+      "asrDtmfTerminationDigit": "string",
+      "asrTimeout": "number",
+      "nuanceOptions": "#nuanceOptions",
+      "deepgramOptions": "#deepgramOptions",
+      "ibmOptions": "#ibmOptions"
     },
     "required": [
       "vendor"
+    ]
+  },
+  "ibmOptions": {
+    "properties": {
+      "sttApiKey": "string",
+      "sttRegion": "string",
+      "ttsApiKey": "string",
+      "ttsRegion": "string",
+      "instanceId": "string",
+      "model": "string",
+      "languageCustomizationId": "string",
+      "acousticCustomizationId": "string",
+      "baseModelVersion": "string",
+      "watsonMetadata": "string",
+      "watsonLearningOptOut": "boolean"
+    },
+    "required": [
+    ]
+  },
+  "deepgramOptions": {
+    "properties": {
+      "apiKey": "string",
+      "tier": {
+        "type": "string",
+        "enum": [
+          "enhanced",
+          "base"
+        ]
+      },
+      "model": {
+        "type": "string",
+        "enum": [
+          "general",
+          "meeting",
+          "phonecall",
+          "voicemail",
+          "finance",
+          "conversationalai",
+          "video",
+          "custom"
+        ]
+      },
+      "customModel": "string",
+      "version": "string",
+      "punctuate": "boolean",
+      "profanityFilter": "boolean",
+      "redact": {
+        "type": "string",
+        "enum": [
+          "pci",
+          "numbers",
+          "true",
+          "ssn"
+        ]
+      },
+      "diarize": "boolean",
+      "diarizeVersion": "string",
+      "ner": "boolean",
+      "multichannel": "boolean",
+      "alternatives": "number",
+      "numerals": "boolean",
+      "search": "array",
+      "replace": "array",
+      "keywords": "array",
+      "endpointing": "boolean",
+      "vadTurnoff": "number",
+      "tag": "string"
+    }
+  },
+  "nuanceOptions": {
+    "properties": {
+      "clientId": "string",
+      "secret": "string",
+      "kryptonEndpoint": "string",
+      "topic": "string",
+      "utteranceDetectionMode": {
+        "type": "string",
+        "enum": [
+          "single",
+          "multiple",
+          "disabled"
+        ]
+      },
+      "punctuation": "boolean",
+      "profanityFilter": "boolean",
+      "includeTokenization": "boolean",
+      "discardSpeakerAdaptation": "boolean",
+      "suppressCallRecording": "boolean",
+      "maskLoadFailures": "boolean",
+      "suppressInitialCapitalization": "boolean",
+      "allowZeroBaseLmWeight": "boolean",
+      "filterWakeupWord": "boolean",
+      "resultType": {
+        "type": "string",
+        "enum": [
+          "final",
+          "partial",
+          "immutable_partial"
+        ]
+      },
+      "noInputTimeoutMs": "number",
+      "recognitionTimeoutMs": "number",
+      "utteranceEndSilenceMs": "number",
+      "maxHypotheses": "number",
+      "speechDomain": "string",
+      "formatting": "#formatting",
+      "clientData": "object",
+      "userId": "string",
+      "speechDetectionSensitivity": "number",
+      "resources": ["#resource"]
+    },
+    "required": [
+    ]
+  },
+  "resource": {
+    "properties": {
+      "externalReference": "#resourceReference",
+      "inlineWordset": "string",
+      "builtin": "string",
+      "inlineGrammar": "string",
+      "wakeupWord": "[string]",
+      "weightName": {
+        "type": "string",
+        "enum": [
+          "defaultWeight",
+          "lowest",
+          "low",
+          "medium",
+          "high",
+          "highest"
+        ]
+      },
+      "weightValue": "number",
+      "reuse": {
+        "type": "string",
+        "enum": [
+          "undefined_reuse",
+          "low_reuse",
+          "high_reuse"
+        ]
+      }
+    },
+    "required": [
+    ]
+  },
+  "resourceReference": {
+    "properties": {
+      "type": {
+        "type": "string",
+        "enum": [
+          "undefined_resource_type",
+          "wordset",
+          "compiled_wordset",
+          "domain_lm",
+          "speaker_profile",
+          "grammar",
+          "settings"
+        ]
+      },
+      "uri": "string",
+      "maxLoadFailures": "boolean",
+      "requestTimeoutMs": "number",
+      "headers": "object"
+    },
+    "required": [
+    ]
+  },
+  "formatting": {
+    "properties": {
+      "scheme": "string",
+      "options": "object"
+    },
+    "required": [
+      "scheme",
+      "options"
     ]
   },
   "lexIntent": {
@@ -485,10 +730,29 @@
     "properties": {
       "enable": "boolean",
       "voiceMs": "number",
-      "mode": "number"  
+      "mode": "number"
     },
     "required": [
       "enable"
     ]
+  },
+  "amd": {
+    "properties": {
+      "actionHook": "object|string",
+      "thresholdWordCount": "number",
+      "timers": "#amdTimers",
+      "recognizer": "#recognizer"
+    },
+    "required": [
+      "actionHook"
+    ]
+  },
+  "amdTimers": {
+    "properties": {
+      "noSpeechTimeoutMs": "number",
+      "decisionTimeoutMs": "number",
+      "toneTimeoutMs": "number",
+      "greetingCompletionTimeoutMs": "number"
+    }
   }
 }

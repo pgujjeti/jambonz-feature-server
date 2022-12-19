@@ -15,12 +15,9 @@ const tracer = require('./tracer')(process.env.JAMBONES_OTEL_SERVICE_NAME || 'ja
 const api = require('@opentelemetry/api');
 srf.locals = {...srf.locals, otel: {tracer, api}};
 
-const PORT = process.env.HTTP_PORT || 3000;
-const opts = {
-  timestamp: () => {return `, "time": "${new Date().toISOString()}"`;},
-  level: process.env.JAMBONES_LOGLEVEL || 'info'
-};
-const logger = require('pino')(opts);
+const opts = {level: process.env.JAMBONES_LOGLEVEL || 'info'};
+const pino = require('pino');
+const logger = pino(opts, pino.destination({sync: false}));
 const {LifeCycleEvents, FS_UUID_SET_NAME} = require('./lib/utils/constants');
 const installSrfLocals = require('./lib/utils/install-srf-locals');
 installSrfLocals(srf, logger);
@@ -28,24 +25,15 @@ installSrfLocals(srf, logger);
 const {
   initLocals,
   createRootSpan,
+  handleSipRec,
   getAccountDetails,
   normalizeNumbers,
   retrieveApplication,
   invokeWebCallback
 } = require('./lib/middleware')(srf, logger);
 
-// HTTP
-const express = require('express');
-const helmet = require('helmet');
-const app = express();
-Object.assign(app.locals, {
-  logger,
-  srf
-});
-
-const httpRoutes = require('./lib/http-routes');
-
 const InboundCallSession = require('./lib/session/inbound-call-session');
+const SipRecCallSession = require('./lib/session/siprec-call-session');
 
 if (process.env.DRACHTIO_HOST) {
   srf.connect({host: process.env.DRACHTIO_HOST, port: process.env.DRACHTIO_PORT, secret: process.env.DRACHTIO_SECRET });
@@ -68,30 +56,19 @@ if (process.env.NODE_ENV === 'test') {
 srf.use('invite', [
   initLocals,
   createRootSpan,
+  handleSipRec,
   getAccountDetails,
   normalizeNumbers,
   retrieveApplication,
   invokeWebCallback
 ]);
 
-srf.invite((req, res) => {
-  const session = new InboundCallSession(req, res);
+srf.invite(async(req, res) => {
+  const isSipRec = !!req.locals.siprec;
+  const session = isSipRec ? new SipRecCallSession(req, res) : new InboundCallSession(req, res);
+  if (isSipRec) await session.answerSipRecCall();
   session.exec();
 });
-
-// HTTP
-app.use(helmet());
-app.use(helmet.hidePoweredBy());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use('/', httpRoutes);
-app.use((err, req, res, next) => {
-  logger.error(err, 'burped error');
-  res.status(err.status || 500).json({msg: err.message});
-});
-const httpServer = app.listen(PORT);
-
-logger.info(`listening for HTTP requests on port ${PORT}, serviceUrl is ${srf.locals.serviceUrl}`);
 
 const sessionTracker = srf.locals.sessionTracker = require('./lib/session/session-tracker');
 sessionTracker.on('idle', () => {
@@ -100,19 +77,30 @@ sessionTracker.on('idle', () => {
     srf.locals.lifecycleEmitter.scaleIn();
   }
 });
-
 const getCount = () => sessionTracker.count;
 const healthCheck = require('@jambonz/http-health-check');
-healthCheck({app, logger, path: '/', fn: getCount});
+let httpServer;
+
+const createHttpListener = require('./lib/utils/http-listener');
+createHttpListener(logger, srf)
+  .then(({server, app}) => {
+    httpServer = server;
+    healthCheck({app, logger, path: '/', fn: getCount});
+    return {server, app};
+  })
+  .catch((err) => {
+    logger.error(err, 'Error creating http listener');
+  });
+
 
 setInterval(() => {
   srf.locals.stats.gauge('fs.sip.calls.count', sessionTracker.count);
-}, 5000);
+}, 20000);
 
 const disconnect = () => {
   return new Promise ((resolve) => {
-    httpServer.on('close', resolve);
-    httpServer.close();
+    httpServer?.on('close', resolve);
+    httpServer?.close();
     srf.disconnect();
     srf.locals.mediaservers.forEach((ms) => ms.disconnect());
   });
